@@ -1662,3 +1662,9 @@ input, select, textarea {
 		body.is-preload #footer {
 			opacity: 0;
 		}
+
+.flower-icon {
+  width: 5em;
+  height: 6em;
+  filter: invert(0); /* maakt wit op donkere achtergrond */
+}
