@@ -36,6 +36,11 @@
 				opacity: 1;
 			}
 
+			&.book-article {
+				width: 60rem;
+				max-width: calc(100vw - 2rem);
+			}
+
 			.close {
 				display: block;
 				position: absolute;
@@ -78,6 +83,67 @@
 			}
 		}
 
+		.book-viewer {
+			margin: 0 0 2rem 0;
+		}
+
+		.book-stage {
+			margin: 0 auto;
+			filter: drop-shadow(0 0.75rem 1rem rgba(0, 0, 0, 0.35));
+		}
+
+		.book-viewer.is-cover.is-landscape {
+			.book-stage {
+				&:before {
+					content: '';
+					position: absolute;
+					z-index: 20;
+					top: 0;
+					bottom: 0;
+					left: 0;
+					width: 50%;
+					background: #161a1d;
+					pointer-events: none;
+				}
+			}
+		}
+
+		.book-controls {
+			display: grid;
+			grid-template-columns: 1fr auto 1fr;
+			align-items: center;
+			gap: 1rem;
+			margin-top: 1.25rem;
+		}
+
+		.book-control {
+			margin: 0;
+		}
+
+		.book-prev {
+			justify-self: start;
+		}
+
+		.book-next {
+			justify-self: end;
+		}
+
+		.book-counter {
+			margin: 0;
+			text-align: center;
+		}
+
+		.payment-box {
+			margin-top: 2rem;
+			padding: 1.5rem;
+			border: solid 1px _palette(border);
+			border-radius: _size(border-radius);
+
+			> :last-child {
+				margin-bottom: 0;
+			}
+		}
+
 		@include breakpoint('<=small') {
 			article {
 				@include padding(2rem, 2rem, (1.5rem, 0, 0.5rem, 0));
@@ -92,6 +158,22 @@
 					}
 				}
 			}
+
+			.book-controls {
+				grid-template-columns: 1fr;
+			}
+
+			.book-counter {
+				grid-column: 1;
+				grid-row: auto;
+			}
+
+			.book-prev,
+			.book-next {
+				justify-self: stretch;
+				width: 100%;
+			}
+
 		}
 
 		@include breakpoint('<=xsmall') {

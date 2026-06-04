@@ -103,6 +103,9 @@
 							// Activate article.
 								$article.addClass('active');
 
+							if (id == 'book')
+								window.setTimeout(initBookViewer, 0);
+
 							// Unlock.
 								locked = false;
 
@@ -139,6 +142,9 @@
 									setTimeout(function() {
 
 										$article.addClass('active');
+
+										if (id == 'book')
+											window.setTimeout(initBookViewer, 0);
 
 										// Window stuff.
 											$window
@@ -178,6 +184,9 @@
 									setTimeout(function() {
 
 										$article.addClass('active');
+
+										if (id == 'book')
+											window.setTimeout(initBookViewer, 0);
 
 										// Window stuff.
 											$window
@@ -305,6 +314,112 @@
 
 			});
 
+		// Book viewer.
+			var $bookViewer = $('.book-viewer'),
+				$bookStage = $bookViewer.find('.book-stage'),
+				$bookCounter = $bookViewer.find('.book-counter span'),
+				$bookPrev = $bookViewer.find('.book-prev'),
+				$bookNext = $bookViewer.find('.book-next'),
+				bookPageIndex = 0,
+				bookPageFlip = null,
+				bookPageImages = [
+					'images/book-preview/leaf-1.jpg',
+					'images/book-preview/leaf-2.jpg',
+					'images/book-preview/leaf-3.jpg',
+					'images/book-preview/leaf-4.jpg',
+					'images/book-preview/leaf-12.jpg',
+					'images/book-preview/leaf-5.jpg',
+					'images/book-preview/leaf-6.jpg',
+					'images/book-preview/leaf-7.jpg',
+					'images/book-preview/leaf-8.jpg',
+					'images/book-preview/leaf-9.jpg',
+					'images/book-preview/leaf-10.jpg',
+					'images/book-preview/leaf-11.jpg',
+					'images/book-preview/leaf-13.jpg'
+				];
+
+			function updateBookControls(pageIndex) {
+
+				if (typeof pageIndex === 'number')
+					bookPageIndex = pageIndex;
+
+				var pageLabel = (bookPageIndex + 1).toString(),
+					isLandscape = bookPageFlip && bookPageFlip.getOrientation() === 'landscape',
+					isCover = bookPageIndex === 0;
+
+				if (bookPageFlip
+					&& isLandscape
+					&& bookPageIndex > 0
+					&& bookPageIndex < bookPageImages.length - 1)
+					pageLabel += '-' + Math.min(bookPageIndex + 2, bookPageImages.length);
+
+				$bookViewer.toggleClass('is-cover', isCover);
+				$bookViewer.toggleClass('is-landscape', isLandscape);
+				$bookCounter.text(pageLabel);
+				$bookPrev.prop('disabled', bookPageIndex === 0);
+				$bookNext.prop('disabled',
+					bookPageIndex + (isLandscape ? 1 : 0) >= bookPageImages.length - 1);
+
+			}
+
+			function initBookViewer() {
+
+				if (bookPageFlip
+					|| $bookStage.length === 0
+					|| typeof St === 'undefined')
+					return;
+
+				bookPageFlip = new St.PageFlip($bookStage[0], {
+					width: 595,
+					height: 842,
+					size: 'stretch',
+					minWidth: 300,
+					maxWidth: 595,
+					minHeight: 425,
+					maxHeight: 842,
+					drawShadow: true,
+					flippingTime: 850,
+					usePortrait: true,
+					autoSize: true,
+					maxShadowOpacity: 0.45,
+					showCover: true,
+					mobileScrollSupport: true,
+					swipeDistance: 30,
+					showPageCorners: true
+				});
+
+				bookPageFlip.on('init', function(event) {
+					updateBookControls(event.data.page);
+				});
+
+				bookPageFlip.on('flip', function(event) {
+					updateBookControls(event.data);
+				});
+
+				bookPageFlip.on('changeOrientation', function() {
+					updateBookControls();
+				});
+
+				bookPageFlip.loadFromImages(bookPageImages);
+
+			}
+
+			$bookPrev.on('click', function() {
+				initBookViewer();
+
+				if (bookPageFlip)
+					bookPageFlip.flipPrev('bottom');
+			});
+
+			$bookNext.on('click', function() {
+				initBookViewer();
+
+				if (bookPageFlip)
+					bookPageFlip.flipNext('bottom');
+			});
+
+			updateBookControls();
+
 		// Events.
 			$body.on('click', function(event) {
 
@@ -323,6 +438,20 @@
 						// Article visible? Hide.
 							if ($body.hasClass('is-article-visible'))
 								$main._hide(true);
+
+						break;
+
+					case 37:
+
+						if ($('#book').hasClass('active') && bookPageFlip)
+							bookPageFlip.flipPrev('bottom');
+
+						break;
+
+					case 39:
+
+						if ($('#book').hasClass('active') && bookPageFlip)
+							bookPageFlip.flipNext('bottom');
 
 						break;
 
